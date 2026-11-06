@@ -1,0 +1,1535 @@
+/* =========================================================
+   Tokens
+   ========================================================= */
+:root {
+  --c-bg: #FFFFFF;
+  /* Figma colour styles */
+  --c-ink: #04050F;          /* Black */
+  --c-text: #383D57;         /* Gray — body copy */
+  --c-navy: #161D4A;         /* Dark blue */
+  --c-muted: #9395B1;        /* Light Gray */
+  --c-panel: #F2F5FB;        /* Light blue */
+  --c-rule: rgba(4, 5, 15, .2); /* Black 20 — dividers */
+  --c-line: #E6E8F0;
+  --c-grid: rgba(11, 18, 54, .055);
+  --c-accent: #002BBA;       /* brand blue */
+  --c-accent-soft: #DFE7FF;
+  --c-pen: var(--c-accent);  /* the scroll line and its formulas */
+  --c-dark: #070D26;
+
+  --f-display: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --container: 1520px; /* Figma frames are 1518px wide */
+  --gutter: clamp(16px, 4vw, 48px);
+  --header-h: 72px;
+  --radius: 20px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* =========================================================
+   Base
+   ========================================================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);
+  /* headline lines slide past the edges as they enter and drift; iOS Safari
+     ignores overflow on <body> alone, so clip at the root too
+     (clip, not hidden: no scroll container, so position: sticky keeps working) */
+  overflow-x: clip;
+}
+
+body {
+  position: relative;
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden; /* older browsers */
+  overflow-x: clip;
+}
+
+img, video, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, p, figure { margin: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--c-ink);
+  color: #fff;
+  border-radius: 999px;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform .2s var(--ease);
+}
+.skip-link:focus { transform: none; }
+
+
+/* Column guides behind everything, like ruled paper */
+.page-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.page-grid__inner { height: 100%; }
+.page-grid__inner::before {
+  content: "";
+  display: block;
+  height: 100%;
+  border-right: 1px solid var(--c-grid);
+  background: linear-gradient(to right, var(--c-grid) 1px, transparent 1px) 0 0 / calc(100% / 6) 100%;
+}
+
+main, .site-header { position: relative; z-index: 1; }
+.site-header { position: fixed; }
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 26px;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font: 500 1rem/1 var(--f-body);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .25s var(--ease), color .25s var(--ease),
+              border-color .25s var(--ease), transform .25s var(--ease);
+}
+.btn:active { transform: scale(.98); }
+
+.btn--primary { background: var(--c-ink); color: #fff; }
+.btn--primary:hover { background: var(--c-accent); }
+
+.btn--ghost { border-color: var(--c-ink); color: var(--c-ink); background: var(--c-bg); }
+.btn--ghost:hover { background: var(--c-accent-soft); border-color: var(--c-accent); }
+
+.btn--light { background: #fff; color: var(--c-accent); }
+.btn--light:hover { background: var(--c-ink); color: #fff; }
+
+.btn--outline-light { border-color: rgba(255, 255, 255, .7); color: #fff; }
+.btn--outline-light:hover { background: rgba(255, 255, 255, .12); border-color: #fff; }
+
+.btn--sm { min-height: 42px; padding: 0 20px; font-size: .9375rem; }
+
+.btn__icon { width: 16px; height: 16px; transition: transform .25s var(--ease); }
+.btn:hover .btn__icon { transform: translateY(2px); }
+
+/* =========================================================
+   Header / Navigation
+   ========================================================= */
+.site-header {
+  inset: 0 0 auto;
+  z-index: 50;
+  height: var(--header-h);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s var(--ease);
+}
+/* Blur lives on a pseudo-element: backdrop-filter on the header itself
+   would become the containing block for the fixed mobile menu. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(255, 255, 255, 0);
+  transition: background-color .35s var(--ease), backdrop-filter .35s var(--ease), -webkit-backdrop-filter .35s var(--ease);
+}
+/* Once the page scrolls, the bar frosts: blurred backdrop, lightly see-through */
+.site-header.is-scrolled { border-bottom-color: var(--c-line); }
+.site-header.is-scrolled::before {
+  background: rgba(255, 255, 255, .62);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+}
+body.nav-open .site-header::before { background: var(--c-bg); }
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  font-family: var(--f-display);
+  font-size: 1.8125rem;
+  line-height: 1;
+  letter-spacing: -.024em;
+  color: var(--c-ink);
+  text-decoration: none;
+}
+
+.nav { display: flex; align-items: center; }
+.nav__list { display: flex; align-items: center; gap: 32px; }
+
+/* Figma "Current page" states: Default = ink, Hover = blue,
+   Pressed (and the section you're in) = ink with a 7px dot */
+.nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-block: 6px;
+  font-size: 1rem;
+  line-height: 20px;
+  letter-spacing: -.0375em;
+  color: var(--c-ink);
+  text-decoration: none;
+  transition: color .2s var(--ease);
+}
+.nav__link:hover { color: var(--c-accent); }
+.nav__link::before {
+  content: "";
+  display: none;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--c-accent);
+}
+.nav__link:active,
+.nav__link.is-current:not(:hover) { color: var(--c-ink); }
+.nav__link:active::before,
+.nav__link.is-current::before { display: block; }
+/* Header "Contact" and "Let's connect" (About, case pages): pill buttons from the
+   same family as the contact buttons — on white they're the ink fill */
+.nav__link.nav__link--circled,
+.profile__connect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 22px;
+  border: 1.5px solid var(--c-ink);
+  border-radius: 999px;
+  background: var(--c-ink);
+  font: 500 .9375rem/1 var(--f-body);
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease),
+              color .25s var(--ease), transform .25s var(--ease);
+}
+.nav__link.nav__link--circled:hover,
+.nav__link.nav__link--circled.is-current,
+.profile__connect:hover { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+.nav__link.nav__link--circled.is-current:not(:hover) { color: #fff; }
+.nav__link.nav__link--circled:active,
+.profile__connect:active { transform: scale(.98); }
+/* the pill already marks Contact: no dot */
+.nav__link--circled::before,
+.nav__link--circled.is-current::before { display: none; }
+
+.nav-toggle {
+  display: none;
+  position: relative;
+  width: 44px; height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.nav-toggle__bar {
+  position: absolute;
+  left: 11px;
+  width: 22px; height: 1.5px;
+  background: var(--c-ink);
+  transition: transform .3s var(--ease), top .3s var(--ease);
+}
+.nav-toggle__bar:nth-of-type(2) { top: 18px; }
+.nav-toggle__bar:nth-of-type(3) { top: 25px; }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-of-type(2) { top: 21.5px; transform: rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-of-type(3) { top: 21.5px; transform: rotate(-45deg); }
+
+@media (max-width: 767px) {
+  .nav-toggle { display: block; }
+
+  .nav {
+    position: fixed;
+    inset: var(--header-h) 0 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+    padding: 32px var(--gutter) 40px;
+    background: var(--c-bg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility 0s .3s;
+  }
+  .nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .3s var(--ease), transform .3s var(--ease);
+  }
+
+  .nav__list { flex-direction: column; gap: 4px; }
+  .nav__link {
+    display: block;
+    padding-block: 10px;
+    font-family: var(--f-display);
+    font-size: 2.75rem;
+    font-weight: 400;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .nav__link::before,
+  .nav__link.is-current::before { display: none; }
+  .nav__link.nav__link--circled { /* a full-size pill under the big links */
+    margin-top: 20px;
+    min-height: 52px;
+    padding: 0 26px;
+    font-size: 1rem;
+  }
+
+  body.nav-open { overflow: hidden; }
+}
+
+/* =========================================================
+   Hero
+   ========================================================= */
+/* Proportions follow the 1518px Figma frame: the display size scales with
+   the viewport and everything in the headline block is measured in em. */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: calc(var(--header-h) + 20px);
+  padding-bottom: clamp(32px, 4vw, 56px);
+  background: var(--c-bg);
+}
+
+.hero__meta {
+  display: grid;
+  grid-template-columns: 43.6% 1fr;
+  align-items: center;
+}
+.hero__meta-item {
+  font-size: .875rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: .043em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.eyebrow__dot {
+  width: 8px; height: 8px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--c-accent);
+}
+
+.hero__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: clamp(12px, 1.4vw, 22px);
+}
+
+.hero__display {
+  --d: clamp(3.5rem, 9.1vw, 8.625rem); /* headline size: 138px at 1518px */
+  position: relative;
+  font-size: var(--d);
+}
+
+.hero__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: 1em;
+  line-height: .96;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+/* Scroll drift (--drift is set by js/main.js): lines 1 and 3 slide left, line 2 right */
+.hero__line {
+  display: block;
+  transform: translateX(calc(var(--drift, 0px) * -1));
+  will-change: transform;
+}
+.hero__line:nth-child(2) { transform: translateX(var(--drift, 0px)); }
+.hero__line--accent {
+  font-size: .855em; /* 118 / 138 */
+  line-height: 1.12;
+  letter-spacing: .042em;
+  color: var(--c-accent);
+}
+
+/* Letter tilt on hover, per the Figma "Headline opening" component:
+   Default = ink, Hover = blue and rotated ~5° (letters wrapped by js/main.js) */
+.word { display: inline-block; white-space: nowrap; }
+.char {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  transition:
+    transform .5s cubic-bezier(.34, 1.56, .64, 1),
+    color .25s var(--ease);
+}
+.char:hover,
+.char.is-hot {
+  transform: rotate(-5deg);
+  color: var(--c-accent);
+  transition-duration: .3s, .1s;
+}
+.hero__line--accent .char:hover,
+.hero__line--accent .char.is-hot { color: var(--c-ink); }
+
+/* Empty slot beside "I SEE PATTERNS" where the line writes a formula */
+.hero__formula {
+  position: absolute;
+  left: 64%;
+  top: 0;
+  width: 34%;
+  height: calc(var(--d) * .96);
+}
+
+/* Focus areas: a stepped list with arrow tiles */
+.hero__focus {
+  position: absolute;
+  left: 77.6%;
+  top: calc(var(--d) * 2.54); /* level with SYSTEMS, as in Figma */
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: .9375rem;
+}
+.hero__focus li {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  height: 23px;
+  font-weight: 600;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--c-navy);
+}
+.hero__focus li:nth-child(2) { padding-left: 23px; }
+.hero__focus li:nth-child(3) { padding-left: 42px; }
+.hero__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 25px; height: 25px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #3F95FF 0%, var(--c-accent) 100%);
+  box-shadow: 0 2px 6px rgba(0, 43, 186, .25);
+}
+.hero__tile svg {
+  width: 25px; height: 25px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero__lead {
+  max-width: 34em;
+  margin-top: clamp(20px, 2vw, 30px);
+  font-size: clamp(1.0625rem, 1.32vw, 1.25rem);
+  line-height: 1.45;
+  color: var(--c-text);
+}
+
+.socials { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.socials a {
+  font-size: .9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--c-muted);
+  transition: color .2s var(--ease);
+}
+.socials a::after { content: " ↗"; color: var(--c-accent); }
+.socials a:hover { color: var(--c-ink); }
+
+.socials--light a { color: rgba(255, 255, 255, .8); }
+.socials--light a::after { color: #fff; }
+.socials--light a:hover,
+.socials--light a:hover::after { color: #4B74FF; } /* light accent, readable on the dark footer */
+
+/* Entrance: layered (parallax) arrival once the loader has gone.
+   Uses the separate `translate` property so it stacks with the scroll drift
+   (`transform`) and the letter hover. */
+.js .hero__line {
+  opacity: 0;
+  translate: var(--from-x, -9%) 45%;
+  transition:
+    translate 1.2s cubic-bezier(.16, 1, .3, 1),
+    opacity .7s var(--ease);
+  transition-delay: calc(.15s + var(--n, 0) * .13s);
+}
+.js .hero__line:nth-child(1) { --n: 0; }
+.js .hero__line:nth-child(2) { --n: 1; --from-x: 9%; }  /* from the right, like its scroll drift */
+.js .hero__line:nth-child(3) { --n: 2; }
+.js .hero.is-ready .hero__line { opacity: 1; translate: 0 0; }
+
+.js .hero__focus li {
+  opacity: 0;
+  translate: 70px 0;
+  transition:
+    translate 1s cubic-bezier(.16, 1, .3, 1),
+    opacity .6s var(--ease);
+  transition-delay: calc(.6s + var(--n, 0) * .1s);
+}
+.js .hero__focus li:nth-child(2) { --n: 1; }
+.js .hero__focus li:nth-child(3) { --n: 2; }
+/* the tile travels further than its label, so it catches up — the parallax layer */
+.js .hero__focus .hero__tile {
+  translate: 50px 0;
+  transition: translate 1.25s cubic-bezier(.16, 1, .3, 1);
+  transition-delay: inherit;
+}
+.js .hero.is-ready .hero__focus li,
+.js .hero.is-ready .hero__focus .hero__tile { opacity: 1; translate: 0 0; }
+
+.js .hero [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+.js .hero.is-ready [data-reveal] { opacity: 1; transform: none; }
+
+/* =========================================================
+   Loader — Poisson limit theorem written by hand
+   ========================================================= */
+.loader { display: none; }
+
+.is-loading .loader,
+.loader.is-leaving {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px var(--gutter);
+  background: #080D26;
+  color: #fff;
+  cursor: pointer;
+}
+.loader.is-leaving {
+  transform: translateY(-100%);
+  transition: transform .7s cubic-bezier(.76, 0, .24, 1);
+}
+.is-loading body { overflow: hidden; }
+
+.loader__bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .75);
+}
+
+/* Full-bleed stage: the pen enters and leaves at the screen edges */
+.loader__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin-inline: calc(var(--gutter) * -1);
+}
+.loader__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+}
+
+@media (max-width: 767px) {
+  .loader__bar { font-size: .6875rem; }
+}
+
+.loader__count {
+  margin-left: auto;
+  font-family: var(--f-display);
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: .8;
+  letter-spacing: 0;
+  color: #fff;
+}
+.loader__count small {
+  font-family: var(--f-body);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 4px;
+  color: rgba(255, 255, 255, .75);
+}
+
+/* Pen strokes (loader theorem + formulas on the scroll line).
+   js/math.js sets each stroke's width so it is the same on screen. */
+.m-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.m-stroke.is-muted { opacity: .7; }
+
+/* Handwriting: each stroke is drawn in turn. Undrawn strokes stay hidden,
+   otherwise their round caps would show as dots. */
+.is-writable .m-stroke {
+  opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.is-writable.is-drawn .m-stroke {
+  animation: m-draw var(--dur, .3s) cubic-bezier(.35, .1, .65, .95) var(--d, 0s) forwards;
+}
+.is-writable.is-drawn .m-stroke.is-muted { --to: .7; }
+@keyframes m-draw {
+  from { opacity: var(--to, 1); }
+  to { opacity: var(--to, 1); stroke-dashoffset: 0; }
+}
+
+/* =========================================================
+   Scroll-drawn line
+   ========================================================= */
+.scribble {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 2;
+  width: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+.scribble__path {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.scribble__path--ink { stroke: var(--c-pen); }
+.scribble__path--light { stroke: #fff; }
+.scribble__tip { fill: var(--c-pen); stroke: #fff; stroke-width: 2; }
+/* Ring around the dot where the hero line comes to rest; the dot sits in its
+   centre and pulses, and a soft wave keeps spreading out of the ring */
+.scribble__halo {
+  opacity: 0;
+  transition: opacity .4s var(--ease);
+}
+.scribble__halo.is-on { opacity: 1; }
+.scribble__halo-ring,
+.scribble__halo-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.scribble__halo-ring {
+  fill: rgba(255, 255, 255, .6);
+  stroke: #8E9DFF;
+  stroke-width: 1.5;
+  transform: scale(.4);
+  transition: transform .6s cubic-bezier(.34, 1.56, .64, 1);
+}
+.scribble__halo.is-on .scribble__halo-ring { transform: none; }
+.scribble__halo.is-light .scribble__halo-ring { fill: rgba(255, 255, 255, .12); stroke: rgba(255, 255, 255, .7); }
+.scribble__halo.is-light .scribble__halo-wave { stroke: rgba(255, 255, 255, .7); }
+.scribble__halo-wave {
+  fill: none;
+  stroke: #8E9DFF;
+  stroke-width: 1.5;
+  opacity: 0;
+}
+.scribble__halo.is-on .scribble__halo-wave { animation: halo-wave 2s ease-out .6s infinite; }
+@keyframes halo-wave {
+  0%   { transform: scale(1);   opacity: .7; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+.scribble__tip { transform-box: fill-box; transform-origin: center; }
+.scribble__tip.is-resting { animation: tip-pulse 2s ease-in-out infinite; }
+@keyframes tip-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.45); }
+}
+.scribble__tip.is-light { fill: #fff; stroke: var(--c-pen); }
+.scribble__label { color: var(--c-pen); }
+.scribble__label.is-light { color: #fff; }
+
+/* =========================================================
+   Sections (drafts)
+   ========================================================= */
+.section { padding-block: clamp(80px, 11vw, 160px); }
+
+.section--dark { background: var(--c-dark); color: #fff; }
+.section--accent { background: var(--c-accent); color: #fff; }
+
+.section-label {
+  display: flex;
+  gap: 10px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.section-label__num { color: var(--c-accent); }
+.section--dark .section-label__num { color: #8EA2FF; }
+.section--accent .section-label__num { color: rgba(255, 255, 255, .7); }
+
+.glyph-zone { min-height: 200px; }
+.glyph-zone--tall { min-height: clamp(260px, 32vw, 420px); }
+.glyph-zone--wide { min-height: clamp(120px, 14vw, 180px); }
+
+/* =========================================================
+   About (Figma "About — Oryna Saienko", 1518px frame)
+   ========================================================= */
+.about {
+  position: relative;
+  background: var(--c-bg);
+  padding-block: clamp(48px, 4vw, 56px) clamp(48px, 4vw, 64px);
+}
+.about__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 28.3vw, 430px);
+  gap: clamp(32px, 5.5vw, 84px);
+  align-items: start;
+}
+
+.about__label {
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  font-size: .6875rem; /* 11px */
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+.about__index {
+  display: flex;
+  gap: 4px;
+  color: var(--c-accent);   /* (02) in blue */
+}
+.about__index span { color: var(--c-ink); } /* ABOUT ME in black */
+
+.about__title {
+  margin-top: 40px;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 6.72vw, 6.375rem); /* 102px at 1518 */
+  line-height: 1.02;
+  letter-spacing: .012em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.about__title-line { display: block; }
+.about__title-line--accent { color: var(--c-accent); }
+
+.about__lead {
+  margin-top: clamp(36px, 3.6vw, 54px); /* room for the underline the scroll line draws */
+  max-width: 700px;
+  font-size: clamp(1.0625rem, 1.32vw, 1.25rem); /* 20px */
+  line-height: 25px;
+  color: var(--c-text);
+}
+
+.about__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 264px));
+  gap: 30px;
+  margin-top: clamp(48px, 4.7vw, 71px);
+}
+.about__stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--c-rule);
+}
+.about__stats strong {
+  align-self: flex-start; /* hug the number, so the scroll line circles just it */
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 5.27vw, 5rem); /* 80px */
+  line-height: .8;
+  color: var(--c-accent);
+}
+.about__stats strong.is-long { font-size: clamp(2.5rem, 4.74vw, 4.5rem); } /* 72px */
+.about__stats span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: .75rem;
+  font-weight: 500;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: var(--c-text);
+}
+.about__stats b { font-weight: 700; letter-spacing: .058em; color: var(--c-ink); }
+
+.about__text {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 442px));
+  gap: 32px;
+  margin-top: clamp(40px, 4.3vw, 65px);
+}
+.about__text p {
+  font-size: clamp(1.0625rem, 1.32vw, 1.25rem); /* 20px */
+  line-height: 28px;
+  color: var(--c-text);
+}
+
+/* Profile panel */
+.profile {
+  padding: 22px 24px 14px;
+  background: var(--c-panel);
+}
+.profile__name {
+  font-family: var(--f-display);
+  font-size: 2.125rem;
+  line-height: 40px;
+  letter-spacing: .015em;
+  color: var(--c-ink);
+}
+.profile__role {
+  margin-top: 6px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--c-rule);
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.profile__facts {
+  display: grid;
+  gap: 4px;
+  margin-top: 15px;
+  font-size: .875rem;
+  line-height: 20px;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.profile__facts li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.profile__facts li::before {
+  content: "";
+  flex: none;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--c-accent);
+}
+
+/* Photo with the halftone lens (driven by js/main.js: --lx/--ly in px) */
+.profile__photo {
+  position: relative;
+  margin-top: 25px;
+  aspect-ratio: 382 / 401;
+  overflow: hidden;
+  cursor: none;
+  touch-action: pan-y;
+}
+.profile__photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+/* The halftone file is framed 8px (of 382) to the right of the colour one,
+   so it is shifted back to line up; the clip centre is shifted the other way
+   so the circle still sits right under the pointer. */
+.profile__photo-dots {
+  --shift: 2.094%;
+  transform: translateX(calc(var(--shift) * -1));
+  clip-path: circle(0 at calc(var(--lx, 50%) + var(--shift)) var(--ly, 50%));
+  transition: clip-path .35s var(--ease);
+}
+.profile__photo.is-lensing .profile__photo-dots {
+  clip-path: circle(80px at calc(var(--lx, 50%) + var(--shift)) var(--ly, 50%));
+}
+.profile__photo.is-lensing.is-tracking .profile__photo-dots { transition: none; }
+.profile__lens {
+  position: absolute;
+  left: var(--lx, 50%); top: var(--ly, 50%);
+  width: 160px; height: 160px;
+  margin: -80px 0 0 -80px;
+  border: 1px solid rgba(255, 255, 255, .75);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(.2);
+  transition: opacity .3s var(--ease), transform .35s var(--ease);
+}
+.profile__lens::after { /* the cursor itself, as a small dot in the middle */
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 6px; height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--c-accent);
+}
+.profile__photo.is-lensing .profile__lens { opacity: 1; transform: none; }
+
+.profile__connect { margin-top: 18px; }
+
+/* =========================================================
+   Selected work (Figma "Selected Work — Portfolio", 1518×850)
+   The section is tall; its stage sticks to the viewport while the
+   cards turn (js/main.js). Card size and positions scale with --cw.
+   ========================================================= */
+.work {
+  --work-bg: #080D26;          /* Dark BG */
+  --work-accent: #4B74FF;      /* Light Accent */
+  /* card width: 332px at 1518; also capped by height so everything fits the pinned screen */
+  --cw: clamp(240px, min(25vw, 42vh), 420px);
+  --gap: clamp(16px, 1.6vw, 24px);
+  position: relative;
+  height: calc(100svh + 3 * 75svh); /* one screen + a scroll step per project change */
+  background:
+    radial-gradient(rgba(255, 255, 255, .055) 1px, transparent 1.4px) 0 0 / 24px 24px,
+    var(--work-bg);
+  color: #fff;
+}
+.work__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 680px;
+  overflow: hidden;
+}
+.work__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: calc(var(--header-h) + 8px);
+  padding-bottom: clamp(24px, 4vh, 56px);
+}
+
+.work__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: .6875rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+.work__label span { color: var(--work-accent); }
+.work__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  color: rgba(255, 255, 255, .7);
+}
+.work__count span { font-size: .8125rem; line-height: 17px; letter-spacing: 0; }
+
+.work__title {
+  position: relative;
+  align-self: flex-start;
+  margin-top: 10px;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(3rem, min(6.6vw, 10.5vh), 6.25rem); /* 100px */
+  line-height: 1.04;
+  letter-spacing: .016em;
+  text-transform: uppercase;
+}
+.work__title span { display: block; }
+.work__title-accent { color: var(--work-accent); }
+.work__underline {
+  position: absolute;
+  left: -.16em; bottom: -.3em;
+  width: 6.46em; height: .25em;
+  max-width: none;
+  overflow: visible;
+}
+.work__underline path {
+  fill: none;
+  stroke: var(--work-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 700;
+  stroke-dashoffset: 700;
+  transition: stroke-dashoffset 1.2s cubic-bezier(.65, 0, .35, 1) .2s;
+}
+.work.is-inview .work__underline path { stroke-dashoffset: 0; }
+
+/* Cards: absolutely placed, transformed by js/main.js (--x, --s, --b, --o) */
+.work__cards {
+  position: relative;
+  flex: none;
+  perspective: 1800px;
+  perspective-origin: var(--po, 30%) 40%; /* look straight at the front card */
+  transform-style: preserve-3d;
+  height: calc(var(--cw) * .855); /* 284 / 332 */
+  margin-top: clamp(40px, 6.5vh, 80px); /* clear of the MADE CLEAR. underline */
+}
+.work-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: var(--cw);
+  /* a slot on a drum: placed round the arc, turned to face out from its axis */
+  transform:
+    translateX(var(--x, 0px))
+    translateZ(var(--z, 0px))
+    rotateY(var(--ry, 0deg))
+    scale(var(--s, 1));
+  transform-origin: 50% 40%;
+  backface-visibility: hidden;
+  filter: blur(var(--b, 0px));
+  opacity: var(--o, 1);
+  will-change: transform, filter, opacity;
+}
+.work-card.is-active { z-index: 5; }
+.work-card__link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+.work-card__preview {
+  position: relative;
+  display: block;
+  aspect-ratio: 332 / 226;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: #E6EAF5;
+}
+.work-card__preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .6s var(--ease);
+}
+.work-card__preview img.is-left { object-position: left center; }
+.work-card.is-active .work-card__link:hover img { transform: scale(1.04); }
+.work-card__tag {
+  position: absolute;
+  top: 8px; left: 8px; right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .036em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+.work-card__tag span { font-size: .75rem; }
+.work-card__note {
+  position: absolute;
+  left: 8px; bottom: 8px;
+  font-size: .75rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .042em;
+  text-transform: uppercase;
+  color: var(--c-text);
+}
+.work-card__title {
+  font-family: var(--f-display);
+  font-size: 1.25rem;
+  line-height: 24px;
+  letter-spacing: .02em;
+}
+.work-card__detail {
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .036em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+/* The project in front */
+.work__featured {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  margin-top: auto;
+  padding-top: clamp(32px, 5.5vh, 64px); /* never closer than this to the cards */
+}
+.work__meta { display: flex; align-items: center; gap: 2px; }
+.work__num {
+  width: 1.35em;
+  font-family: var(--f-display);
+  font-size: clamp(3rem, 4.5vw, 4.25rem); /* 68px */
+  line-height: 1.09;
+  color: var(--work-accent);
+}
+.work__name {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 2.37vw, 2.25rem); /* 36px */
+  line-height: 40px;
+  letter-spacing: .02em;
+}
+.work__scope {
+  margin-top: 8px;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: .014em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.work__statement {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  text-align: right;
+}
+.work__headline {
+  font-family: var(--f-display);
+  font-size: clamp(1.25rem, 1.71vw, 1.625rem); /* 26px */
+  line-height: 30px;
+  letter-spacing: .015em;
+  text-transform: uppercase;
+}
+.work__headline-accent {
+  margin-left: 6px;
+  font-size: 1.154em; /* 30px */
+  color: var(--work-accent);
+}
+.work__headline,
+.work__scope { transition: opacity .25s var(--ease); }
+.work__featured.is-swapping .work__headline,
+.work__featured.is-swapping .work__scope { opacity: 0; }
+.work__case {
+  padding: 12px 8px;
+  margin-right: -8px;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .036em;
+  text-transform: uppercase;
+  color: var(--work-accent);
+  text-decoration: none;
+  white-space: pre;
+}
+.work__case:hover { color: #fff; }
+
+/* =========================================================
+   How I work — a ring the scroll line draws; stages sharpen
+   out of a blur as the line reaches their node (js/main.js)
+   ========================================================= */
+.how {
+  --d: clamp(440px, 38vw, 600px);   /* ring diameter */
+  --step-w: 270px;
+  position: relative;
+  padding-block: calc(var(--header-h) + 24px) clamp(96px, 10vw, 160px);
+  background: #fff;
+}
+.how__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: .6875rem;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.how__label span { color: var(--c-accent); }
+.how__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  color: var(--c-muted);
+}
+.how__count span { font-size: .8125rem; line-height: 17px; letter-spacing: 0; }
+
+.how__ring {
+  position: relative;
+  width: var(--d);
+  height: var(--d);
+  margin: clamp(96px, 9vw, 140px) auto 0;
+}
+.how__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  overflow: visible;
+  pointer-events: none;
+}
+.how__arc {
+  fill: none;
+  stroke: var(--c-pen);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.how__node {
+  fill: #fff;
+  stroke: var(--c-pen);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill .3s var(--ease), transform .4s cubic-bezier(.34, 1.56, .64, 1);
+}
+.how__node.is-on { fill: var(--c-pen); transform: scale(1.25); }
+
+.how__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12%;
+  text-align: center;
+}
+.how__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: calc(var(--d) * .2);
+  line-height: .98;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.how__title span { display: block; }
+.how__title span + span { color: var(--c-accent); }
+.how__lead {
+  max-width: 300px;
+  margin-top: 20px;
+  font-size: .9375rem;
+  line-height: 1.45;
+  color: var(--c-text);
+}
+
+/* Stages sit outside the ring, level with their node (--nx/--ny set by js/main.js) */
+.how__steps { margin: 0; padding: 0; list-style: none; }
+.how-step {
+  position: absolute;
+  top: var(--ny, 50%);
+  width: var(--step-w);
+  translate: 0 -24px;
+  filter: blur(7px);
+  opacity: .3;
+  transition: filter .7s var(--ease), opacity .7s var(--ease), translate .9s cubic-bezier(.16, 1, .3, 1);
+}
+.how-step[data-side="left"] { right: calc(100% - var(--nx, 0px) + 30px); text-align: right; }
+.how-step[data-side="right"] { left: calc(var(--nx, 100%) + 30px); }
+.how-step.is-on { filter: none; opacity: 1; translate: 0 -30px; }
+.how-step__num {
+  display: block;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: var(--c-accent);
+}
+.how-step__name {
+  margin-top: 4px;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--c-ink);
+}
+.how-step__text {
+  margin-top: 8px;
+  font-size: .9375rem;
+  line-height: 1.45;
+  color: var(--c-text);
+}
+
+/* No room for the ring: a plain list with a line down its left edge */
+@media (max-width: 1179px) {
+  .how__ring { width: auto; height: auto; margin-top: 56px; }
+  .how__svg { display: none; }
+  .how__center {
+    position: static;
+    align-items: flex-start;
+    padding: 0;
+    text-align: left;
+  }
+  .how__title { font-size: clamp(3.5rem, 12vw, 6rem); }
+  .how__lead { max-width: 420px; }
+  .how__steps {
+    position: relative;
+    display: grid;
+    gap: 40px;
+    margin-top: 56px;
+    padding-left: 32px;
+    border-left: 1px solid var(--c-rule);
+  }
+  .how-step,
+  .how-step[data-side] {
+    position: relative;
+    inset: auto;
+    width: auto;
+    max-width: 520px;
+    text-align: left;
+    translate: 0 16px;
+  }
+  .how-step.is-on { translate: none; }
+  .how-step::before { /* node on the line */
+    content: "";
+    position: absolute;
+    left: -38px; top: 4px;
+    width: 11px; height: 11px;
+    border: 1.5px solid var(--c-pen);
+    border-radius: 50%;
+    background: #fff;
+    transition: background-color .3s var(--ease);
+  }
+  .how-step.is-on::before { background: var(--c-pen); }
+}
+
+/* Contact */
+.contact {
+  --contact-accent: #4B74FF;   /* Light Accent, as in Selected work */
+  padding-top: 100px;
+  padding-bottom: 32px;
+  background: #080D26;         /* Dark BG */
+}
+/* label and heading set like Selected work */
+.contact .section-label {
+  margin-bottom: 40px;
+  font-size: .6875rem;
+  line-height: 14px;
+  letter-spacing: .045em;
+}
+.contact .section-label__num { color: var(--contact-accent); }
+.contact__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: 32px;
+  align-items: start; /* heading sits right under the label */
+}
+.contact__title {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 6.6vw, 6.25rem);
+  line-height: 1.04;
+  letter-spacing: .016em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.contact__title span { display: block; }
+.contact__title-accent { color: var(--contact-accent); }
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(32px, 4vw, 48px);
+}
+
+.contact__wordmark {
+  margin-top: clamp(64px, 8vw, 120px);
+  font-family: var(--f-display);
+  font-size: clamp(5rem, 22vw, 20rem);
+  line-height: .8;
+  text-align: center;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, .55);
+  white-space: nowrap;
+}
+/* the same letter tilt as the hero headline: the outline fills with the light accent */
+.contact__wordmark .char { transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), color .25s var(--ease), -webkit-text-stroke-color .25s var(--ease); }
+.contact__wordmark .char:hover,
+.contact__wordmark .char.is-hot {
+  color: var(--contact-accent);
+  -webkit-text-stroke-color: var(--contact-accent);
+}
+
+.contact__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, .25);
+  font-size: .875rem;
+}
+.back-top {
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, .6);
+  border-radius: 999px;
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.back-top:hover { background: #fff; color: var(--c-ink); }
+.contact .btn--light { color: var(--c-ink); }
+.contact .btn--light:hover { background: var(--contact-accent); color: #fff; }
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 1023px) {
+  /* not enough room beside SYSTEMS: the focus list joins the flow */
+  .hero__focus { position: static; margin-top: 32px; font-size: .875rem; }
+  .contact__grid { grid-template-columns: minmax(0, 1fr) 200px; }
+  .about__grid { grid-template-columns: 1fr; }
+  .profile { max-width: 430px; }
+  .work__featured { flex-direction: column; align-items: flex-start; }
+  .work__statement { align-items: flex-start; text-align: left; }
+  .work__case { margin-right: 0; margin-left: -8px; }
+}
+
+@media (max-width: 767px) {
+  :root { --header-h: 64px; }
+
+  .logo { font-size: 1.5rem; }
+  .nav__list { align-items: stretch; }
+
+  .hero { min-height: 0; }
+  .hero__meta { grid-template-columns: 1fr; }
+  .hero__meta-item { display: none; }
+  .hero__body { padding-top: 20px; }
+  .hero__display { --d: clamp(3.5rem, 17vw, 5.5rem); }
+  /* no room beside the headline: the formula gets its own row under it */
+  .hero__formula {
+    position: relative;
+    left: auto;
+    display: block;
+    width: 100%;
+    height: 132px;
+    margin-block: 8px 36px; /* room for the lower limit n=1 */
+  }
+  .hero__lead br { display: none; }
+  .socials { gap: 10px 20px; }
+
+  .contact__grid { grid-template-columns: 1fr; }
+  .glyph-zone--tall { min-height: 220px; }
+  .about__title { font-size: clamp(2.5rem, 12.5vw, 4rem); }
+  .about__stats { gap: 16px; }
+  .about__stats strong { font-size: clamp(2.25rem, 11vw, 3.5rem); }
+  .about__stats strong.is-long { font-size: clamp(2rem, 9.5vw, 3.1rem); }
+  .about__text { grid-template-columns: 1fr; gap: 16px; }
+  .about__text p { font-size: 1rem; line-height: 26px; }
+  /* Phones: no pinning — a swipeable row of cards with their own titles */
+  .work { height: auto; --cw: 78vw; }
+  .work__stage { position: static; height: auto; min-height: 0; overflow: visible; }
+  .work__inner { padding-block: 56px 48px; }
+  .work__count { display: none; }
+  .work__cards {
+    display: flex;
+    gap: 16px;
+    height: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .work__cards::-webkit-scrollbar { display: none; }
+  .work-card {
+    position: static;
+    flex: none;
+    transform: none;
+    filter: none;
+    opacity: 1;
+    scroll-snap-align: start;
+  }
+  .work-card.is-clone { display: none; } /* the drum's second ring is desktop-only */
+  .work__featured { display: none; }
+
+  .contact__actions { flex-direction: column; }
+  .contact__actions .btn { width: 100%; }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .how-step { filter: none; opacity: 1; translate: none; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .char:hover,
+  .char.is-hot { transform: none; } /* colour change only */
+}

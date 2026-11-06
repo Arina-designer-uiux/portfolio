@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oryna Saienko — Product Designer</title>
+  <meta name="description" content="Oryna Saienko — UX/UI and Product Designer. Mathematics taught me to find structure in complexity; I use it to design clear, intuitive digital products.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- link previews (add og:image and og:url once the site has its domain) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Oryna Saienko — Product Designer">
+  <meta property="og:description" content="Oryna Saienko — UX/UI and Product Designer. Mathematics taught me to find structure in complexity; I use it to design clear, intuitive digital products.">
+  <meta property="og:site_name" content="Oryna Saienko">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      // Loader on every visit, except with reduced motion
+      try {
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          d.classList.add('is-loading');
+          // Safety net: never trap the page behind the loader
+          setTimeout(function () {
+            if (d.classList.contains('is-loading')) {
+              d.classList.remove('is-loading');
+              document.dispatchEvent(new Event('loader:done'));
+            }
+          }, 10000);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <script src="js/math.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <!-- ===== Loader: Poisson limit theorem, handwritten (js/math.js) ===== -->
+  <div class="loader" data-loader aria-hidden="true">
+    <div class="loader__bar">
+      <span>Oryna Saienko™</span>
+      <span>Product Designer</span>
+    </div>
+    <div class="loader__stage">
+      <svg class="loader__svg" data-formula-svg></svg>
+    </div>
+    <div class="loader__bar loader__bar--bottom">
+      <span class="loader__count"><span data-loader-count>1</span><small>%</small></span>
+    </div>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Page-wide grid lines -->
+  <div class="page-grid" aria-hidden="true"><div class="container page-grid__inner"></div></div>
+
+  <!-- Scroll-drawn line: built by js/math.js -->
+  <svg class="scribble" aria-hidden="true" data-scribble></svg>
+
+  <!-- ===== Navigation ===== -->
+  <header class="site-header" data-header>
+    <div class="container site-header__inner">
+      <a class="logo" href="#top" aria-label="Oryna Saienko — home">
+        Oryna Saienko
+      </a>
+
+      <nav class="nav" id="site-nav" aria-label="Main" data-nav>
+        <ul class="nav__list">
+          <li><a class="nav__link is-current" href="#top" aria-current="page">Home</a></li>
+          <li><a class="nav__link" href="#about">About me</a></li>
+          <li><a class="nav__link" href="#work">Work</a></li>
+          <li>
+            <a class="nav__link nav__link--circled" href="#contact">
+              Contact
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-nav-toggle>
+        <span class="visually-hidden">Menu</span>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+        <span class="nav-toggle__bar" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="container hero__meta" data-reveal style="--i:0">
+        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true" data-scribble-start></span>UX/UI Designer · Product Design</p>
+        <p class="hero__meta-item">Portfolio — 2026</p>
+      </div>
+
+      <div class="container hero__body">
+        <div class="hero__display">
+          <!-- Letters are split into spans by js/main.js for the hover stretch -->
+          <h1 class="hero__title" id="hero-title" data-letters>
+            <span class="hero__line">I see patterns</span>
+            <span class="hero__line">in complex</span>
+            <span class="hero__line hero__line--accent">systems.</span>
+          </h1>
+
+          <!-- The scroll line writes ∑ 1/n² = π²/6 here (js/math.js) -->
+          <span class="hero__formula" aria-hidden="true" data-hero-glyph data-glyph="sigma" data-label="basel" data-scale="1.9"></span>
+
+          <!-- The scroll line ends on the first tile (js/math.js) -->
+          <ul class="hero__focus" aria-label="Focus areas">
+            <li data-scribble-target><span class="hero__tile" aria-hidden="true"><svg viewBox="0 0 25 25"><path d="M8 8l9 9M17 10.5V17h-6.5"/></svg></span>B2B platforms</li>
+            <li><span class="hero__tile" aria-hidden="true"><svg viewBox="0 0 25 25"><path d="M8 8l9 9M17 10.5V17h-6.5"/></svg></span>SaaS &amp; mobile</li>
+            <li><span class="hero__tile" aria-hidden="true"><svg viewBox="0 0 25 25"><path d="M8 8l9 9M17 10.5V17h-6.5"/></svg></span>Design systems</li>
+          </ul>
+        </div>
+
+        <p class="hero__lead" data-reveal style="--i:2">
+          Mathematics taught me to find structure in complexity.<br>
+          I use it to design clear, intuitive digital products.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== About ===== -->
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="container about__grid">
+        <div class="about__main">
+          <div class="about__label">
+            <p class="about__index">(02)<span>About me</span></p>
+          </div>
+
+          <!-- the scroll line underlines the second line (js/math.js) -->
+          <h2 class="about__title" id="about-title">
+            <span class="about__title-line">Think in systems.</span>
+            <span class="about__title-line about__title-line--accent" data-scribble-underline>Design for people.</span>
+          </h2>
+
+          <p class="about__lead">Mathematics taught me to bring structure to complex products and make them easier to use.</p>
+
+          <ul class="about__stats">
+            <!-- numbers count up when they scroll into view (js/main.js) -->
+            <li><strong data-count="2023" data-from="2000">2023</strong><span><b>Design</b>since</span></li>
+            <li><strong data-count="16" data-suffix="+">16+</strong><span><b>Client</b>brands</span></li>
+            <li data-scribble-circle><strong class="is-long" data-count="1000" data-suffix="+">1000+</strong><span><b>UI</b>screens</span></li>
+          </ul>
+
+          <div class="about__text">
+            <p>I’m Oryna, a UX/UI designer with a mathematics background. I bring structure to complex products and make workflows easier to understand.</p>
+            <p>From research and user flows to polished UI and developer handoff, I design clear digital experiences for people and teams.</p>
+          </div>
+        </div>
+
+        <aside class="profile" aria-label="Profile">
+          <p class="profile__name">Oryna Saienko</p>
+          <p class="profile__role">UX/UI Designer / Product Design</p>
+          <ul class="profile__facts">
+            <li>Based in Poland</li>
+            <li>Working worldwide</li>
+            <li>Focus: B2B · SaaS · Product</li>
+          </ul>
+
+          <!-- Halftone lens: a 160px circle under the cursor shows the dotted version -->
+          <figure class="profile__photo" data-lens>
+            <img src="assets/img/portrait.png" width="382" height="401" alt="Portrait of Oryna Saienko in profile" loading="lazy">
+            <img class="profile__photo-dots" src="assets/img/portrait-halftone.png" width="382" height="401" alt="" aria-hidden="true" loading="lazy">
+            <span class="profile__lens" aria-hidden="true"></span>
+          </figure>
+
+          <a class="profile__connect" href="#contact">
+            Let’s connect
+          </a>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== Selected work =====
+         Desktop: the stage pins while you scroll and the cards turn like a drum
+         (js/main.js). Phones: a plain swipeable row. -->
+    <section class="work" id="work" aria-labelledby="work-title" data-dark data-work>
+      <div class="work__stage">
+        <div class="container work__inner">
+          <div class="work__top">
+            <p class="work__label"><span>(03)</span> Selected work</p>
+            <p class="work__count">04 selected projects<span>2023 — 2026</span></p>
+          </div>
+
+          <h2 class="work__title" id="work-title">
+            <span>Complex.</span>
+            <span class="work__title-accent">Made clear.</span>
+            <svg class="work__underline" viewBox="0 0 648.5 28.8" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M.8 27C11.1 22.5 62.2 11.4 184.7 3.5 307.3-4.4 640.2 21.8 646.8 11.8"/>
+            </svg>
+          </h2>
+
+          <ul class="work__cards" data-work-cards>
+            <li class="work-card" data-project='{"num":"01","name":"BIDPRO","scope":"Procurement • Workflows • Enterprise","lead":"From complex workflows","accent":"to clear experiences.","href":"case-studies/bidpro.html"}'>
+              <a class="work-card__link" href="case-studies/bidpro.html" aria-label="BIDPRO — K–12 procurement case study">
+                <span class="work-card__preview">
+                  <img src="assets/img/work/bidpro.jpg" alt="" width="900" height="720" loading="lazy">
+                  <span class="work-card__tag">B2B platform<span>01</span></span>
+                  <span class="work-card__note">UI preview</span>
+                </span>
+                <span class="work-card__title">BIDPRO</span>
+                <span class="work-card__detail">K–12 procurement</span>
+              </a>
+            </li>
+            <li class="work-card" data-project='{"num":"02","name":"CREDEFEND","scope":"Credit &amp; identity monitoring · UX/UI design","lead":"Make credit data","accent":"easier to understand.","href":"case-studies/credefend.html"}'>
+              <a class="work-card__link" href="case-studies/credefend.html" aria-label="CREDEFEND — credit monitoring case study">
+                <span class="work-card__preview">
+                  <img class="is-left" src="assets/img/work/credefend.jpg" alt="" width="900" height="507" loading="lazy">
+                  <span class="work-card__tag">Fintech<span>02</span></span>
+                  <span class="work-card__note">UI preview</span>
+                </span>
+                <span class="work-card__title">CREDEFEND</span>
+                <span class="work-card__detail">Credit monitoring</span>
+              </a>
+            </li>
+            <li class="work-card" data-project='{"num":"03","name":"WAYLEADR","scope":"Workplace parking · Mobile app","lead":"A better way to","accent":"park at work.","href":"case-studies/wayleadr.html"}'>
+              <a class="work-card__link" href="case-studies/wayleadr.html" aria-label="WAYLEADR — AI parking assistant case study">
+                <span class="work-card__preview">
+                  <img src="assets/img/work/wayleadr.jpg" alt="" width="900" height="716" loading="lazy">
+                  <span class="work-card__tag">Mobile app<span>03</span></span>
+                  <span class="work-card__note">UI preview</span>
+                </span>
+                <span class="work-card__title">WAYLEADR</span>
+                <span class="work-card__detail">Workplace parking</span>
+              </a>
+            </li>
+            <li class="work-card" data-project='{"num":"04","name":"VIP HOSPITALITY","scope":"Aviation services · Website redesign","lead":"The people behind","accent":"better airport experiences.","href":"case-studies/vip-hospitality.html"}'>
+              <a class="work-card__link" href="case-studies/vip-hospitality.html" aria-label="VIP Hospitality — aviation support website case study">
+                <span class="work-card__preview">
+                  <img src="assets/img/work/vip-hospitality.jpg" alt="" width="900" height="507" loading="lazy">
+                  <span class="work-card__tag">Enterprise website<span>04</span></span>
+                  <span class="work-card__note">UI preview</span>
+                </span>
+                <span class="work-card__title">VIP HOSPITALITY</span>
+                <span class="work-card__detail">Aviation services</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- the project in front; text swaps (with a scramble) as the cards turn -->
+          <div class="work__featured" aria-live="polite">
+            <div class="work__meta">
+              <p class="work__num" data-work-num>01</p>
+              <div>
+                <p class="work__name" data-work-name>BIDPRO</p>
+                <p class="work__scope" data-work-scope>Procurement • Workflows • Enterprise</p>
+              </div>
+            </div>
+            <div class="work__statement">
+              <p class="work__headline"><span data-work-lead>From complex workflows</span> <span class="work__headline-accent" data-work-accent>to clear experiences.</span></p>
+              <a class="work__case" href="case-studies/bidpro.html" data-work-link>Open case study&nbsp;&nbsp;↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== How I work =====
+         The scroll line comes in at the top of the ring and draws its left half
+         (js/math.js); the right half is drawn in step with it (js/main.js).
+         Each stage sharpens out of a blur as the line reaches its node. -->
+    <section class="how" id="process" aria-labelledby="how-title" data-how>
+      <div class="container">
+        <div class="how__top">
+          <p class="how__label"><span>(04)</span> How I work</p>
+          <p class="how__count">04 stages<span>One process</span></p>
+        </div>
+
+        <div class="how__ring" data-how-ring>
+          <svg class="how__svg" aria-hidden="true" focusable="false" data-how-svg></svg>
+
+          <div class="how__center">
+            <h2 class="how__title" id="how-title"><span>How I</span> <span>work</span></h2>
+            <p class="how__lead">Four stages that turn complex requirements into clear, buildable products.</p>          </div>
+
+          <ol class="how__steps">
+            <li class="how-step" data-side="left" data-angle="40">
+              <span class="how-step__num">01</span>
+              <h3 class="how-step__name">Understand</h3>
+              <p class="how-step__text">Clarify user needs, business goals, and constraints.</p>
+            </li>
+            <li class="how-step" data-side="right" data-angle="70">
+              <span class="how-step__num">02</span>
+              <h3 class="how-step__name">Structure</h3>
+              <p class="how-step__text">Map roles, information, and the key user flows.</p>
+            </li>
+            <li class="how-step" data-side="left" data-angle="115">
+              <span class="how-step__num">03</span>
+              <h3 class="how-step__name">Design</h3>
+              <p class="how-step__text">Shape the flows into a consistent, usable interface.</p>
+            </li>
+            <li class="how-step" data-side="right" data-angle="145">
+              <span class="how-step__num">04</span>
+              <h3 class="how-step__name">Handoff</h3>
+              <p class="how-step__text">Prepare interface details and specs for development.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact (draft) ===== -->
+    <section class="section section--dark contact" id="contact" aria-labelledby="contact-title" data-dark>
+      <div class="container">
+        <p class="section-label"><span class="section-label__num">(05)</span> Contact</p>
+        <div class="contact__grid">
+          <div>
+            <h2 class="contact__title" id="contact-title">
+              <span>Have a complex</span>
+              <span>product?</span>
+              <span class="contact__title-accent">Let’s make it clear.</span>
+            </h2>
+            <div class="contact__actions">
+              <a class="btn btn--light" href="https://t.me/arinasaienko" target="_blank" rel="noopener">Write on Telegram</a>
+              <a class="btn btn--outline-light" href="https://www.linkedin.com/in/oruna-saienko-ui-uxdesigner" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </div>
+          <div class="glyph-zone glyph-zone--tall" data-glyph="partial" data-label="partial"></div>
+        </div>
+
+        <p class="contact__wordmark" aria-hidden="true" data-letters>Saienko</p>
+
+        <div class="contact__footer">
+          <p>© 2026 Oryna Saienko</p>
+          <ul class="socials socials--light" aria-label="Social profiles">
+            <li><a href="https://www.behance.net/231b2000" target="_blank" rel="noopener">Behance</a></li>
+            <li><a href="https://dribbble.com/Arina_Saienko" target="_blank" rel="noopener">Dribbble</a></li>
+          </ul>
+          <a class="back-top" href="#top" data-scribble-end>Back to top ↑</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
