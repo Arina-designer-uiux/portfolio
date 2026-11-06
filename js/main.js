@@ -77,7 +77,7 @@
   const counters = [...document.querySelectorAll('[data-count]')];
   if (counters.length) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fmt = (el, n) => { el.textContent = `${n}${el.dataset.suffix || ''}`; };
+    const fmt = (el, n) => { el.textContent = `${el.dataset.prefix || ''}${n}${el.dataset.suffix || ''}`; };
     const run = (el) => {
       const to = Number(el.dataset.count);
       const from = Number(el.dataset.from || 0);

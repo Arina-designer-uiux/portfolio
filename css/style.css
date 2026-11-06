@@ -1480,6 +1480,9 @@ body.nav-open .site-header::before { background: var(--c-bg); }
   .about__stats { gap: 16px; }
   .about__stats strong { font-size: clamp(2.25rem, 11vw, 3.5rem); }
   .about__stats strong.is-long { font-size: clamp(2rem, 9.5vw, 3.1rem); }
+  @media (max-width: 359px) {
+    .about__stats strong { font-size: 2rem; } /* "−36%" fits its third of a 320px screen */
+  }
   .about__text { grid-template-columns: 1fr; gap: 16px; }
   .about__text p { font-size: 1rem; line-height: 26px; }
   /* Phones: no pinning — a swipeable row of cards with their own titles */
